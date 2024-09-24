@@ -1,3 +1,4 @@
 chroma/
 data/
 venv/
+__pycache__/
