@@ -4,6 +4,7 @@ from langchain_community.embeddings.ollama import OllamaEmbeddings
 
 from app.rag.load import load_docs
 from app.rag.embed import embed_docs
+from app.rag.query import query_rag
 from app.services.utils import sanitize_string
 from app.services.validators import *
 from app.config import EMBEDDING_MODEL
@@ -38,4 +39,14 @@ async def upload_file(file: UploadFile = File(...)):
     "file_name": clean_filename,
     "file_format": format,
     "embedding": "started"
+  }
+
+
+@router.post("/ask")
+def ask_embedded_files(query: str):
+  query = query
+  response = query_rag(query, "chroma", embeddings)
+  return {
+    "query": query,
+    "response": response,
   }
