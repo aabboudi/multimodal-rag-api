@@ -10,6 +10,8 @@ def validate_file_ext(file_name: str):
       status_code=400,
       detail=f"File extension '{ext}' is not allowed"
     )
+  else:
+    return ext
 
 def validate_file_size(file: UploadFile):
   file_size = len(file.file.read())

@@ -1,8 +1,15 @@
-from fastapi import APIRouter, File, UploadFile
-from datetime import datetime
+from fastapi import APIRouter, UploadFile, File
+from datetime import datetime, timezone
+from langchain_community.embeddings.ollama import OllamaEmbeddings
 
-from app.services.validators import *
+from app.rag.load import load_docs
+from app.rag.embed import embed_docs
 from app.services.utils import sanitize_string
+from app.services.validators import *
+from app.config import EMBEDDING_MODEL
+
+# embeddings = OllamaEmbeddings(model="nomic-embed-text")
+embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
 
 router = APIRouter()
 
@@ -10,16 +17,25 @@ router = APIRouter()
 def health_check():
   return {"Status": "Running"}
 
+
+# TODO: Add filter to store files with the same format in a single directory
 @router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-  validate_file_ext(file.filename)
+  format = validate_file_ext(file.filename)
   validate_file_size(file)
 
-  now = datetime.now().isoformat(timespec="seconds").replace("-", "").replace(":", "")
+  now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
   clean_filename = sanitize_string(file.filename)
-  file_location = f"data/{now + "_" + clean_filename}"
+  file_location = f"data/{format}/{now}_{clean_filename}"
 
   with open(file_location, "wb+") as file_object:
     file_object.write(file.file.read())
 
-  return {"filename": clean_filename}
+  docs = load_docs(format, f"data/{format}")
+  embed_docs(docs)
+
+  return {
+    "file_name": clean_filename,
+    "file_format": format,
+    "embedding": "started"
+  }
