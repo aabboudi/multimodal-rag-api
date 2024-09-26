@@ -53,3 +53,24 @@ def ask_embedded_files(query: str):
     "query": query,
     "response": response,
   }
+
+
+@router.post("/reset")
+def clear_database(confirm: bool):
+  if confirm:
+    if os.path.exists(CHROMA_PATH):
+      shutil.rmtree(CHROMA_PATH)
+      print(f"Database at {CHROMA_PATH} has been cleared.")
+      return {"status": "database cleared"}
+    else:
+      print("Could not clear database. Directory not found")
+      raise HTTPException(
+        status_code=400,
+        detail="no database found"
+      )
+  else:
+    print("Operation not allowed")
+    raise HTTPException(
+      status_code=403,
+      detail="operation not allowed"
+    )
