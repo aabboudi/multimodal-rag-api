@@ -1,3 +1,5 @@
+import os
+import shutil
 from fastapi import APIRouter, UploadFile, File
 from datetime import datetime, timezone
 from langchain_community.embeddings.ollama import OllamaEmbeddings
@@ -7,7 +9,7 @@ from app.rag.embed import embed_docs
 from app.rag.query import query_rag
 from app.services.utils import sanitize_string
 from app.services.validators import *
-from app.config import EMBEDDING_MODEL
+from app.config import EMBEDDING_MODEL, CHROMA_PATH
 
 router = APIRouter()
 
@@ -23,8 +25,11 @@ async def upload_file(file: UploadFile = File(...)):
   validate_file_size(file)
 
   now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
-  clean_filename = sanitize_string(file.filename)
-  file_location = f"data/{file_format}/{now}_{clean_filename}"
+  clean_filename = f"{now}_{sanitize_string(file.filename)}"
+
+  directory = f"data/{file_format}"
+  os.makedirs(directory, exist_ok=True)
+  file_location = f"{directory}/{clean_filename}"
 
   with open(file_location, "wb+") as file_object:
     file_object.write(file.file.read())
