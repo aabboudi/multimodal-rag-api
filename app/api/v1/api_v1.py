@@ -2,6 +2,7 @@ import os
 import shutil
 from fastapi import APIRouter, UploadFile, File
 from datetime import datetime, timezone
+from langchain_chroma import Chroma
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 
 from app.rag.load import load_file
@@ -18,7 +19,14 @@ def health_check():
   return {"Status": "Running"}
 
 
-# TODO: Add filter to store files with the same format in a single directory
+@router.get("/database-count")
+def count_vector_elements():
+  embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
+  DB = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
+  db_count = len(DB.get(include=[]))
+  return {"number_of_docs": db_count}
+
+
 @router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
   file_format = validate_file_ext(file.filename)
