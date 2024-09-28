@@ -1,7 +1,7 @@
 from fastapi import UploadFile, HTTPException
 
 MAX_FILE_SIZE = 5 * 1024 * 1024 # 5MB
-ALLOWED_EXT = {"pdf", "csv"}
+ALLOWED_EXT = {"pdf", "csv", "md"}
 
 def validate_file_ext(file_name: str):
   ext = file_name.split('.')[-1].lower()

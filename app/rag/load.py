@@ -1,9 +1,10 @@
-from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader, CSVLoader
+from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader, CSVLoader, UnstructuredMarkdownLoader
 
 def get_loader_cls(data_format):
   match data_format:
     case "pdf": return PyPDFLoader
     case "csv": return CSVLoader
+    case "md": return UnstructuredMarkdownLoader
     case _: return 0
 
 def load_dir(data_path, data_format):
