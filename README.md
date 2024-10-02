@@ -1,6 +1,6 @@
 # Multimodal RAG System for LLMs
 
-This project implements a multimodal RAG (Retrieval-Augmented Generation) system for large language models, enabling you to query files through API endpoints. Visit [rag.ipynb](notebook/rag.ipynb) for a step-by-step guide on how RAG operates, including examples and expected outcomes. Feel free to start there.
+This project implements a multimodal RAG (Retrieval-Augmented Generation) system for large language models, enabling you to query files through API endpoints. Please note that the API expects the Ollama server to be running.
 
 ### Technologies Used
 

@@ -14,21 +14,21 @@ from app.config import EMBEDDING_MODEL, CHROMA_PATH
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/", tags=["Info"])
 def health_check():
   return {"Status": "Running"}
 
 
-@router.get("/database-count")
-def count_vector_elements():
+@router.get("/db-count", tags=["Info"])
+def count_database_vectors():
   embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
   DB = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
   db_count = len(DB.get(include=[]))
   return {"number_of_docs": db_count}
 
 
-@router.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
+@router.post("/upload", tags=["AI"])
+async def upload_and_embed_file(file: UploadFile = File(...)):
   file_format = validate_file_ext(file.filename)
   validate_file_size(file)
 
@@ -52,7 +52,7 @@ async def upload_file(file: UploadFile = File(...)):
   }
 
 
-@router.post("/ask")
+@router.post("/query", tags=["AI"])
 def ask_embedded_files(query: str):
   query = query
   embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
@@ -63,7 +63,7 @@ def ask_embedded_files(query: str):
   }
 
 
-@router.post("/reset")
+@router.post("/reset", tags=["Control"])
 def clear_database(confirm: bool):
   if confirm:
     if os.path.exists(CHROMA_PATH):
