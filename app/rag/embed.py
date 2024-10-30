@@ -1,9 +1,11 @@
+import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from app.config import CHROMA_PATH, DATA_PATH, EMBEDDING_MODEL
 
 def embed_docs(docs):
+  os.makedirs(CHROMA_PATH, exist_ok=True)
   embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
   db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
 
