@@ -23,6 +23,8 @@ def health_check():
 def count_database_vectors():
   embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
   DB = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
+  if not DB:
+    return {"status": "failed", "message": "database not found"}
   db_count = len(DB.get(include=[]))
   return {"number_of_docs": db_count}
 
