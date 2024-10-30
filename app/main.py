@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .api.v1.api_v1 import router as api_v1_router
+from .api.api_v1 import router as api_v1_router
 
 app = FastAPI(
   title="Multimodal RAG API",
